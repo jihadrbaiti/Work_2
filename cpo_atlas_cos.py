@@ -82,7 +82,7 @@ def process(row):
         row["rejected"] = tokenizer.apply_chat_template(chat_rejected, tokenize=False, add_generation_prompt=False)
         return row
     except Exception as e:
-        print(f"Error processing row: {e}")
+        #print(f"Error processing row: {e}")
         return None
 def print_trainable_parameters(model):
     """
