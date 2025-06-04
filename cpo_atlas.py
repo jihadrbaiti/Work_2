@@ -11,6 +11,7 @@ import wandb
 from torch.optim import RMSprop
 from peft import LoraConfig, get_peft_model
 #from peft import print_trainable_parameters 
+torch.set_float32_matmul_precision('high')
 
 
 peft_config = LoraConfig(
@@ -21,7 +22,7 @@ peft_config = LoraConfig(
     task_type="CAUSAL_LM",  # since you're using a decoder-only model
 )
 
-base_model = AutoModelForCausalLM.from_pretrained("MBZUAI-Paris/Atlas-Chat-2B", torch_dtype=torch.bfloat16)
+base_model = AutoModelForCausalLM.from_pretrained("MBZUAI-Paris/Atlas-Chat-2B", attn_implementation="eager", torch_dtype=torch.bfloat16)
 tokenizer = AutoTokenizer.from_pretrained("MBZUAI-Paris/Atlas-Chat-2B")
 model = get_peft_model(base_model, peft_config)
 wandb.login(key='86570a60523435fb4d496c0e63e8ae11c308bae2')
