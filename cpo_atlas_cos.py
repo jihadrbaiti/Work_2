@@ -33,7 +33,7 @@ wandb.login(key='86570a60523435fb4d496c0e63e8ae11c308bae2')
 print('The training script of XALMA cos using ATLAS-CHAT')
 model.to(dtype=torch.bfloat16)
 cpo_config = CPOConfig(
-    output_dir='/localssd/chouaib/geo_ai/Model2/CPO/XALMA_cos/',
+    output_dir='/localssd/chouaib/geo_ai/Model2/XALMA_cos/',
     max_steps=10000,
     eval_strategy="epoch",
     max_target_length=256,
@@ -57,7 +57,7 @@ cpo_config = CPOConfig(
     remove_unused_columns=False,
     max_length=256,
     max_prompt_length=256,
-    logging_dir="/localssd/chouaib/geo_ai/Model2/CPO/XALMA_cos/logs")
+    logging_dir="/localssd/chouaib/geo_ai/Model2/XALMA_cos/logs")
 
 train = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_splitting/train.csv')
 val = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_splitting/val.csv')

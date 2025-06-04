@@ -28,7 +28,7 @@ wandb.login(key='86570a60523435fb4d496c0e63e8ae11c308bae2')
 print('This script is the training script of CPO using ATLAS-CHAT')
 model.to(dtype=torch.bfloat16)
 cpo_config = CPOConfig(
-    output_dir='/home/jihad.rbaiti/lustre/aim_neural-7he0p8agska/users/jihad.rbaiti/Work2_vf/Atlas_chat_2/CPO/',
+    output_dir='/localssd/chouaib/geo_ai/Model2/CPO/',
     max_steps=10000,
     eval_strategy="epoch",
     learning_rate=1e-5,
@@ -51,10 +51,10 @@ cpo_config = CPOConfig(
     remove_unused_columns=False,
     max_length=256,
     max_prompt_length=256,
-    logging_dir="/home/jihad.rbaiti/lustre/aim_neural-7he0p8agska/users/jihad.rbaiti/Work2_vf/Atlas_chat_2/CPO/logs")
+    logging_dir="/localssd/chouaib/geo_ai/Model2/CPO/logs")
 
-train = pd.read_csv('/home/jihad.rbaiti/Work_2/CPO/data/parallel_dataset/final_data_splitting/train.csv')
-val = pd.read_csv('/home/jihad.rbaiti/Work_2/CPO/data/parallel_dataset/final_data_splitting/val.csv')
+train = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_splitting/train.csv')
+val = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_splitting/val.csv')
 train.rename(columns={'darija': 'prompt','english': 'chosen', 'perturbation': 'rejected'}, inplace=True)
 val.rename(columns={'darija': 'prompt','english': 'chosen', 'perturbation': 'rejected'}, inplace=True)
 train = Dataset.from_pandas(train)
