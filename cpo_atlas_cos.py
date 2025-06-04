@@ -107,7 +107,7 @@ trainer = CPOTrainer(
     args=cpo_config,
     train_dataset=ds_train,
     eval_dataset=ds_val,
-    tokenizer=tokenizer,
+    processing_class=tokenizer,
     peft_config=peft_config,
 )
 trainer.train()#resume_from_checkpoint='/home/jihad.rbaiti/lustre/aim_neural-7he0p8agska/users/jihad.rbaiti/Work2_vf/Atlas_chat/XALMA_cos/checkpoint-10000')
