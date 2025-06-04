@@ -59,8 +59,8 @@ cpo_config = CPOConfig(
     max_prompt_length=256,
     logging_dir="/localssd/chouaib/geo_ai/Model2/CPO/XALMA_cos/logs")
 
-train = pd.read_csv('./final_data_splitting/train.csv')
-val = pd.read_csv('./val.csv')
+train = pd.read_csv('./data/train.csv')
+val = pd.read_csv('./data/val.csv')
 train.rename(columns={'darija': 'prompt','english': 'chosen', 'perturbation': 'rejected'}, inplace=True)
 val.rename(columns={'darija': 'prompt','english': 'chosen', 'perturbation': 'rejected'}, inplace=True)
 train = Dataset.from_pandas(train)
