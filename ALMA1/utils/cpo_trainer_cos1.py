@@ -635,6 +635,7 @@ class CPOTrainer(Trainer):
                 similarities = torch.sum(normalized_logits1 * normalized_logits2, dim=1) # i did mean instead
                 cosine_similarities[:, i] = similarities
             return cosine_similarities
+            
         def scale_cosine_similarity_torch(cosine_similarities):
             scaled_similarities = (cosine_similarities + 1) / 2
             return scaled_similarities
