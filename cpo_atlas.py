@@ -9,6 +9,8 @@ import pandas as pd
 import gc
 import wandb
 from torch.optim import RMSprop
+from pytorch_lightning.strategies.ddp import DDPStrategy
+
 from peft import LoraConfig, get_peft_model
 #from peft import print_trainable_parameters 
 torch.set_float32_matmul_precision('high')
@@ -114,6 +116,6 @@ trainer = CPOTrainer(
     processing_class=tokenizer,
     peft_config=peft_config,
 )
-trainer.train()
+trainer.train(strategy = DDPStrategy(find_unused_parameters=False))
 trainer.save_model(cpo_config.output_dir)
 tokenizer.save_pretrained(cpo_config.output_dir)
