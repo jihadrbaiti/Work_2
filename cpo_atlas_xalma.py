@@ -123,7 +123,7 @@ trainer = CPOTrainer(
     args=cpo_config,
     train_dataset=ds_train,
     eval_dataset=ds_val,
-    processing_class=tokenizer,
+    tokenizer=tokenizer,
     peft_config=peft_config,
 )
 
