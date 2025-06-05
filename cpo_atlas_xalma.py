@@ -92,7 +92,7 @@ def process(row):
         return row
 
     except Exception as e:
-        print(f"Error processing row: {e}")
+        #print(f"Error processing row: {e}")
         return None
 # added
 if tokenizer.pad_token is None:
