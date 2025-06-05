@@ -60,7 +60,7 @@ cpo_config = CPOConfig(
     logging_dir="/localssd/chouaib/geo_ai/Model2/XALMA_cos_kl/logs")
 
 train = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_splitting/train.csv')
-val = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/data/parallel_dataset/final_data_splitting/val.csv')
+val = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_splitting/val.csv')
 train.rename(columns={'darija': 'prompt','english': 'chosen', 'perturbation': 'rejected'}, inplace=True)
 val.rename(columns={'darija': 'prompt','english': 'chosen', 'perturbation': 'rejected'}, inplace=True)
 train = Dataset.from_pandas(train)
