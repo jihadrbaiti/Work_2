@@ -33,7 +33,7 @@ wandb.login(key='86570a60523435fb4d496c0e63e8ae11c308bae2')
 print('The training script of XALMA cos using ATLAS-CHAT')
 model.to(dtype=torch.bfloat16)
 cpo_config = CPOConfig(
-    output_dir='/home/jihad.rbaiti/lustre/aim_neural-7he0p8agska/users/jihad.rbaiti/Work2_vf/Atlas_chat_2/XALMA_cos_kl/',
+    output_dir='/localssd/chouaib/geo_ai/Model2/XALMA_cos_kl/',
     max_steps=10000,
     eval_strategy="epoch",
     max_target_length=256,
@@ -57,10 +57,10 @@ cpo_config = CPOConfig(
     remove_unused_columns=False,
     max_length=256,
     max_prompt_length=256,
-    logging_dir="/home/jihad.rbaiti/lustre/aim_neural-7he0p8agska/users/jihad.rbaiti/Work2_vf/Atlas_chat_2/XALMA_cos_kl/logs")
+    logging_dir="/localssd/chouaib/geo_ai/Model2/XALMA_cos_kl/logs")
 
-train = pd.read_csv('/home/jihad.rbaiti/Work_2/CPO/data/parallel_dataset/final_data_splitting/train.csv')
-val = pd.read_csv('/home/jihad.rbaiti/Work_2/CPO/data/parallel_dataset/final_data_splitting/val.csv')
+train = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_splitting/train.csv')
+val = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/data/parallel_dataset/final_data_splitting/val.csv')
 train.rename(columns={'darija': 'prompt','english': 'chosen', 'perturbation': 'rejected'}, inplace=True)
 val.rename(columns={'darija': 'prompt','english': 'chosen', 'perturbation': 'rejected'}, inplace=True)
 train = Dataset.from_pandas(train)
