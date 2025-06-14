@@ -6,10 +6,10 @@ import torch
 import os
 # import wandb
 
-output_dir = "/home/jihad.rbaiti/lustre/aim_neural-7he0p8agska/users/jihad.rbaiti/Work2_vf/Atlas_chat_2/SFT_try/"
+output_dir = "/localssd/chouaib/geo_ai/Model2/SFT/"
 os.makedirs(output_dir, exist_ok=True)
 
-merged_model_save_path = "/home/jihad.rbaiti/lustre/pt_cloud-muhqxqc6fxo/users/jihad.rbaiti/Work2_vf/Atlas_chat_2/SFT_try/merged_model/"
+merged_model_save_path = "/localssd/chouaib/geo_ai/Model2/SFT/merged_model/"
 os.makedirs(merged_model_save_path, exist_ok=True)
 
 peft_config = LoraConfig(
@@ -76,8 +76,8 @@ training_args = TrainingArguments(
     logging_dir=os.path.join(output_dir, "logs"),
 )
 
-train_df = pd.read_csv('/home/jihad.rbaiti/Work_2/CPO/data/parallel_dataset/final_data_splitting/train.csv')
-val_df = pd.read_csv('/home/jihad.rbaiti/Work_2/CPO/data/parallel_dataset/final_data_splitting/val.csv')
+train_df = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_splitting/train.csv')
+val_df = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_splitting/val.csv')
 
 train_df.rename(columns={'darija': 'prompt', 'english': 'chosen'}, inplace=True)
 val_df.rename(columns={'darija': 'prompt', 'english': 'chosen'}, inplace=True)
