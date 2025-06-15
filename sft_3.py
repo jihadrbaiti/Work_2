@@ -35,6 +35,7 @@ if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
 if tokenizer.bos_token is None:
     tokenizer.add_special_tokens({'bos_token': '<s>'})
+    # Resize model embeddings to account for new tokens
     base_model.resize_token_embeddings(len(tokenizer))
 
 model = get_peft_model(base_model, peft_config)
@@ -118,22 +119,15 @@ def tokenize_for_sft(examples):
             full_input_ids = full_input_ids[:MAX_SEQUENCE_LENGTH]
             full_attention_mask = full_attention_mask[:MAX_SEQUENCE_LENGTH]
             labels = labels[:MAX_SEQUENCE_LENGTH]
-
+        
         all_input_ids.append(full_input_ids)
         all_attention_mask.append(full_attention_mask)
         all_labels.append(labels)
-    
-    padded_inputs = tokenizer.pad(
-        {"input_ids": all_input_ids, "attention_mask": all_attention_mask, "labels": all_labels},
-        padding="max_length",
-        max_length=MAX_SEQUENCE_LENGTH,
-        return_tensors="pt"
-    )
 
     return {
-        "input_ids": padded_inputs["input_ids"],
-        "attention_mask": padded_inputs["attention_mask"],
-        "labels": padded_inputs["labels"],
+        "input_ids": all_input_ids,
+        "attention_mask": all_attention_mask,
+        "labels": all_labels,
     }
 
 ds_train = train_dataset.map(
