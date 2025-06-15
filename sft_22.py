@@ -7,10 +7,9 @@ import os
 import wandb
 
 # ====== Paths ======
-train_path = '/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_splitting/train.csv'
-val_path = '/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_splitting/val.csv'
-output_dir = "/localssd/chouaib/geo_ai/Model2/SFT/"
-merged_model_save_path = os.path.join(output_dir, "merged_model_final")
+train_path = '/home/jihad.rbaiti/Work_2/CPO/data/parallel_dataset/final_data_splitting/train.csv'
+val_path = '/home/jihad.rbaiti/Work_2/CPO/data/parallel_dataset/final_data_splitting/val.csv'
+output_dir = "/home/jihad.rbaiti/lustre/aim_neural-7he0p8agska/users/jihad.rbaiti/Work2_vf/Atlas_chat/SFT/"
 
 # ====== Load and Prepare Dataset ======
 def load_and_prepare_data(train_path, val_path):
@@ -73,7 +72,7 @@ def tokenize(sample):
         return_tensors="pt",
         truncation=True,
         padding="max_length",
-        max_length=256
+        max_length=512
     )[0]
     return {"input_ids": input_ids, "labels": input_ids.clone()}
 
@@ -89,13 +88,12 @@ if tokenizer.chat_template is None:
 # ====== Model with LoRA ======
 base_model = AutoModelForCausalLM.from_pretrained(
     model_id,
-    torch_dtype=torch.bfloat16,
-    use_cache=False
+    torch_dtype=torch.bfloat16
 )
 base_model.resize_token_embeddings(len(tokenizer))
 
 peft_config = LoraConfig(
-    r=4,
+    r=8,
     lora_alpha=16,
     lora_dropout=0.05,
     bias="none",
@@ -124,8 +122,8 @@ training_args = TrainingArguments(
     remove_unused_columns=False,
     warmup_steps=150,
     report_to="wandb",  # Optional: set to "none" if not using WandB
-    run_name="ATLAS_SFT_2",
-    logging_dir="/localssd/chouaib/geo_ai/Model2/SFT/logs",
+    run_name="ATLAS_SFT",
+    logging_dir="/home/jihad.rbaiti/lustre/aim_neural-7he0p8agska/users/jihad.rbaiti/Work2_vf/Atlas_chat/SFT/logs",
 )
 
 trainer = Trainer(
@@ -142,7 +140,3 @@ trainer.train()
 # ====== Save Model ======
 trainer.save_model(output_dir)
 tokenizer.save_pretrained(output_dir)
-
-merged_model = model.merge_and_unload()
-merged_model.save_pretrained(merged_model_save_path)
-tokenizer.save_pretrained(merged_model_save_path) 
