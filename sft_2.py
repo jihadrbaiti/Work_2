@@ -11,6 +11,7 @@ train_path = '/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_s
 val_path = '/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_splitting/val.csv'
 output_dir = "/localssd/chouaib/geo_ai/Model2/SFT/"
 merged_model_save_path = os.path.join(output_dir, "merged_model_final")
+wandb.init(id='3byyd8fc', resume='must', project="huggingface", name="ATLAS_SFT_2" )
 
 # ====== Load and Prepare Dataset ======
 def load_and_prepare_data(train_path, val_path):
@@ -137,7 +138,7 @@ trainer = Trainer(
 )
 
 # ====== Train ======
-trainer.train()
+trainer.train(resume_from_checkpoint="/localssd/chouaib/geo_ai/Model2/SFT/checkpoint-2500/")
 
 # ====== Save Model ======
 trainer.save_model(output_dir)
