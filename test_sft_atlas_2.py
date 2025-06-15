@@ -5,7 +5,7 @@ import pandas as pd
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 smoothing_function = SmoothingFunction().method1
-test_data = pd.read_csv('/home/jihad.rbaiti/Work_2/CPO/data/parallel_dataset/final_data_splitting/test.csv')
+test_data = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_splitting/test.csv')
 
 # Load model and tokenizer
 model = AutoModelForCausalLM.from_pretrained(
