@@ -4,7 +4,6 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments,
 from peft import LoraConfig, get_peft_model
 import torch
 import os
-# import wandb
 
 output_dir = "/localssd/chouaib/geo_ai/Model2/SFT/"
 os.makedirs(output_dir, exist_ok=True)
@@ -29,11 +28,14 @@ base_model = AutoModelForCausalLM.from_pretrained(
 tokenizer = AutoTokenizer.from_pretrained(
     "MBZUAI-Paris/Atlas-Chat-2B",
     trust_remote_code=True,
-    use_fast=False # <--- ADD THIS LINE
+    use_fast=False
 )
 
 if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
+if tokenizer.bos_token is None:
+    tokenizer.add_special_tokens({'bos_token': '<s>'})
+    base_model.resize_token_embeddings(len(tokenizer))
 
 model = get_peft_model(base_model, peft_config)
 
@@ -69,7 +71,7 @@ training_args = TrainingArguments(
     eval_steps=200,
     save_steps=500,
     weight_decay=0.01,
-    remove_unused_columns=False,
+    remove_unused_columns=True,
     warmup_steps=150,
     report_to="wandb",
     run_name="ATLAS_SFT_try",
@@ -88,41 +90,72 @@ val_dataset = Dataset.from_pandas(val_df)
 def tokenize_for_sft(examples):
     source_language = "Moroccan dialect"
     target_language = "English"
-    
-    full_texts = []
+    MAX_SEQUENCE_LENGTH = 256
+
+    all_input_ids = []
+    all_attention_mask = []
+    all_labels = []
+
     for i in range(len(examples['prompt'])):
         prompt = examples['prompt'][i]
         chosen_response = examples['chosen'][i]
         
-        formatted_example = (
+        prompt_text = (
             f"Translate this from [{source_language}] to [{target_language}]:\n"
             f"{source_language}: {prompt}\n"
-            f"{target_language}: {chosen_response}"
+            f"{target_language}: "
         )
-        full_texts.append(formatted_example)
+        
+        tokenized_prompt = tokenizer(prompt_text, add_special_tokens=True, truncation=False)
+        tokenized_response = tokenizer(chosen_response, add_special_tokens=False, truncation=False)
 
-    MAX_SEQUENCE_LENGTH = 256 
+        full_input_ids = tokenized_prompt['input_ids'] + tokenized_response['input_ids'] + [tokenizer.eos_token_id]
+        full_attention_mask = tokenized_prompt['attention_mask'] + tokenized_response['attention_mask'] + [1]
 
-    tokenized_inputs = tokenizer(
-        full_texts,
-        truncation=True,
-        max_length=MAX_SEQUENCE_LENGTH,
+        labels = [-100] * len(tokenized_prompt['input_ids']) + full_input_ids[len(tokenized_prompt['input_ids']):]
+
+        if len(full_input_ids) > MAX_SEQUENCE_LENGTH:
+            full_input_ids = full_input_ids[:MAX_SEQUENCE_LENGTH]
+            full_attention_mask = full_attention_mask[:MAX_SEQUENCE_LENGTH]
+            labels = labels[:MAX_SEQUENCE_LENGTH]
+
+        all_input_ids.append(full_input_ids)
+        all_attention_mask.append(full_attention_mask)
+        all_labels.append(labels)
+    
+    padded_inputs = tokenizer.pad(
+        {"input_ids": all_input_ids, "attention_mask": all_attention_mask, "labels": all_labels},
         padding="max_length",
+        max_length=MAX_SEQUENCE_LENGTH,
         return_tensors="pt"
     )
-    
+
     return {
-        "input_ids": tokenized_inputs["input_ids"],
-        "attention_mask": tokenized_inputs["attention_mask"],
+        "input_ids": padded_inputs["input_ids"],
+        "attention_mask": padded_inputs["attention_mask"],
+        "labels": padded_inputs["labels"],
     }
 
-ds_train = train_dataset.map(tokenize_for_sft, batched=True, num_proc=4, remove_columns=["prompt", "chosen"])
-ds_val = val_dataset.map(tokenize_for_sft, batched=True, num_proc=4, remove_columns=["prompt", "chosen"])
+ds_train = train_dataset.map(
+    tokenize_for_sft, 
+    batched=True, 
+    num_proc=4, 
+    remove_columns=[col for col in train_dataset.column_names if col not in ['input_ids', 'attention_mask', 'labels']]
+)
+ds_val = val_dataset.map(
+    tokenize_for_sft, 
+    batched=True, 
+    num_proc=4, 
+    remove_columns=[col for col in val_dataset.column_names if col not in ['input_ids', 'attention_mask', 'labels']]
+)
 
 print("\nProcessed Training Dataset structure:")
 print(ds_train)
 print("\nFirst tokenized example (training):")
 print(tokenizer.decode(ds_train[0]["input_ids"]))
+print("\nFirst tokenized example (training) labels:")
+decoded_labels = [token_id for token_id in ds_train[0]["labels"] if token_id != -100]
+print(tokenizer.decode(decoded_labels))
 
 trainer = Trainer(
     model=model,
