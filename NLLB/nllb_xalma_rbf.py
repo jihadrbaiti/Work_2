@@ -55,8 +55,8 @@ cpo_config = CPOConfig(
     remove_unused_columns=False,
     max_length=200,
     max_prompt_length=256,logging_dir="/localssd/chouaib/geo_ai/Model_NLLB/XALMA_rbf/logs")
-train = pd.read_csv('/home/jihad.rbaiti/Work_2/CPO/data/parallel_dataset/final_data_splitting/train.csv')#, nrows=150)
-val = pd.read_csv('/home/jihad.rbaiti/Work_2/CPO/data/parallel_dataset/final_data_splitting/val.csv')#, nrows=15)
+train = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_splitting/train.csv')#, nrows=150)
+val = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_splitting/val.csv')#, nrows=15)
 train.rename(columns={'darija': 'prompt','english': 'chosen', 'perturbation': 'rejected'}, inplace=True)
 val.rename(columns={'darija': 'prompt','english': 'chosen', 'perturbation': 'rejected'}, inplace=True)
 train = Dataset.from_pandas(train)
