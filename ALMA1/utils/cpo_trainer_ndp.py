@@ -635,7 +635,6 @@ class CPOTrainer(Trainer):
             return similarities
             #penalty_cos = scale_cosine_similarity_torch(word_level_cosine_similarity(policy_chosen_logits, policy_rejected_logits))
         penalty_ndp = word_level_sigmoid_dot_similarity(policy_chosen_logits, policy_rejected_logits)
-        print('penalty_ndp', (1- penalty_ndp).clamp(0.0, 1.0).mean(dim=1) )
         ###
         #penalty = torch.abs((policy_chosen_logps / num_non_pad_tokens[:len_chosen] - policy_rejected_logps / num_non_pad_tokens[len_chosen:]))
         #penalty = torch.clamp(self.relax_cofficient_1 * torch.exp(self.relax_cofficient_2 * penalty)-1, max=1.0)

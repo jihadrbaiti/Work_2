@@ -679,7 +679,6 @@ class CPOTrainer(Trainer):
             return scaled_similarities'''
         #penalty_cos = scale_cosine_similarity_torch(word_level_cosine_similarity(policy_chosen_logits, policy_rejected_logits))
         penalty_rbf = word_level_rbf_similarity(policy_chosen_logits, policy_rejected_logits, use_median=True)
-        print('penalty_rbf', (1- penalty_rbf).clamp(0.0, 1.0).mean(dim=1) )
         ###
         #penalty = torch.abs((policy_chosen_logps / num_non_pad_tokens[:len_chosen] - policy_rejected_logps / num_non_pad_tokens[len_chosen:]))
         #penalty = torch.clamp(self.relax_cofficient_1 * torch.exp(self.relax_cofficient_2 * penalty)-1, max=1.0)
