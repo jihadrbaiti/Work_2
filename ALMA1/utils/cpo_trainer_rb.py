@@ -679,13 +679,13 @@ class CPOTrainer(Trainer):
             return scaled_similarities'''
         #penalty_cos = scale_cosine_similarity_torch(word_level_cosine_similarity(policy_chosen_logits, policy_rejected_logits))
         penalty_rbf = word_level_rbf_similarity(policy_chosen_logits, policy_rejected_logits, use_median=True)
-        print('penalty_rbf', penalty_rbf)
+        print('penalty_rbf', (1- penalty_rbf).clamp(0.0, 1.0).mean(dim=1) )
         ###
         #penalty = torch.abs((policy_chosen_logps / num_non_pad_tokens[:len_chosen] - policy_rejected_logps / num_non_pad_tokens[len_chosen:]))
         #penalty = torch.clamp(self.relax_cofficient_1 * torch.exp(self.relax_cofficient_2 * penalty)-1, max=1.0)
         # penalty = 0.2
         # print('penalty:', penalty)
-        logits = (policy_chosen_logps - (1- penalty_cos).clamp(0.0, 1.0).mean(dim=1) * policy_rejected_logps).to(self.accelerator.device)
+        logits = (policy_chosen_logps - (1- penalty_rbf).clamp(0.0, 1.0).mean(dim=1) * policy_rejected_logps).to(self.accelerator.device)
 
         # The beta is a temperature parameter for the CPO loss, typically something in the range of 0.1 to 0.5.
         # We ignore the reference model as beta -> 0. The label_smoothing parameter encodes our uncertainty about the labels and
