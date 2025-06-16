@@ -3,7 +3,7 @@ from accelerate import PartialState, infer_auto_device_map, init_empty_weights
 from datasets import load_dataset, Dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer, HfArgumentParser, AutoModelForSeq2SeqLM, M2M100Config
 from trl import ModelConfig, get_peft_config#,CPOConfig, CPOTrainer 
-from ALMA1.utils.cpo_trainer_cos import CPOTrainer
+from ALMA1.utils.cpo_trainer_rbf import CPOTrainer
 from ALMA1.utils.cpo_config import CPOConfig
 
 from trl.trainer.utils import SIMPLE_CHAT_TEMPLATE,SIMPLE_SFT_CHAT_TEMPLATE
@@ -17,7 +17,7 @@ print(torch.cuda.is_available())
 #device = torch.device("cuda")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
-print('Training script of XALMA_cos_kl')
+print('Training script of XALMA_rbf')
 
 model1 = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M").to(device)#haoranxu/ALMA-13B
 tokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-distilled-600M")
@@ -27,10 +27,10 @@ original_config.decoder_layers = 2
 
 model = AutoModelForSeq2SeqLM.from_config(original_config)
 #print('model_logits',model)
-#wandb.init(id='bx4ip03h', resume='must', project="huggingface", name="NLLB_XALMA_cos" )
+#wandb.init(id='bx4ip03h', resume='must', project="huggingface", name="NLLB_XALMA_rbf" )
 wandb.login(key='86570a60523435fb4d496c0e63e8ae11c308bae2')
 cpo_config = CPOConfig(
-    output_dir='/home/jihad.rbaiti/lustre/aim_neural-7he0p8agska/users/jihad.rbaiti/Work2_vf/NLLB/XALMA_rbf',
+    output_dir='/localssd/chouaib/geo_ai/Model_NLLB/XALMA_rbf/',
     max_steps=10000,
     eval_strategy="epoch",
     max_target_length=256,
@@ -46,7 +46,7 @@ cpo_config = CPOConfig(
     bf16=True,
     logging_first_step=True,
     beta=0.2,
-    run_name='NLLB_XALMA_rbf',
+    run_name='NLLB_XALMA_RBF',
     cpo_alpha=0.8,
     eval_steps = 200,
     generate_during_eval =True, 
@@ -54,7 +54,7 @@ cpo_config = CPOConfig(
     max_completion_length=256,
     remove_unused_columns=False,
     max_length=200,
-    max_prompt_length=256,logging_dir="/home/jihad.rbaiti/lustre/aim_neural-7he0p8agska/users/jihad.rbaiti/Work2_vf/NLLB/XALMA_rbf/logs")
+    max_prompt_length=256,logging_dir="/localssd/chouaib/geo_ai/Model_NLLB/XALMA_rbf/logs")
 train = pd.read_csv('/home/jihad.rbaiti/Work_2/CPO/data/parallel_dataset/final_data_splitting/train.csv')#, nrows=150)
 val = pd.read_csv('/home/jihad.rbaiti/Work_2/CPO/data/parallel_dataset/final_data_splitting/val.csv')#, nrows=15)
 train.rename(columns={'darija': 'prompt','english': 'chosen', 'perturbation': 'rejected'}, inplace=True)
@@ -78,7 +78,7 @@ trainer = CPOTrainer(
     #processing_class=tokenizer,
     tokenizer=tokenizer,
 )
-#trainer.train(resume_from_checkpoint="/home/jihad.rbaiti/lustre/aim_neural-7he0p8agska/users/jihad.rbaiti/Work2_vf/NLLB/XALMA_cos/checkpoint-6500")
+#trainer.train(resume_from_checkpoint="/home/jihad.rbaiti/lustre/aim_neural-7he0p8agska/users/jihad.rbaiti/Work2_vf/NLLB/XALMA_rbf/checkpoint-6500")
 trainer.train()
 trainer.save_model(cpo_config.output_dir)
 tokenizer.save_pretrained(cpo_config.output_dir)
