@@ -2,7 +2,7 @@
 export CUDA_VISIBLE_DEVICES=1,2,3,4
 
 # === Setup ===
-LOG_DIR="./logs"
+LOG_DIR="/localssd/chouaib/geo_ai/logs/"
 mkdir -p "$LOG_DIR"
 
 # === First Script: cpo_atlas_ndp.py ===
