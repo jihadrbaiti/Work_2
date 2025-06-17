@@ -648,7 +648,6 @@ class CPOTrainer(Trainer):
         
             #penalty_cos = scale_cosine_similarity_torch(word_level_cosine_similarity(policy_chosen_logits, policy_rejected_logits))
         penalty_atten = semantic_alignment_score(policy_chosen_logits, policy_rejected_logits)
-        print('penalty', penalty_atten)
         ###
         #penalty = torch.abs((policy_chosen_logps / num_non_pad_tokens[:len_chosen] - policy_rejected_logps / num_non_pad_tokens[len_chosen:]))
         #penalty = torch.clamp(self.relax_cofficient_1 * torch.exp(self.relax_cofficient_2 * penalty)-1, max=1.0)
