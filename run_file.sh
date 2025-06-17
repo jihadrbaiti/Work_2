@@ -5,11 +5,6 @@ export CUDA_VISIBLE_DEVICES=1,2,3,4
 LOG_DIR="/localssd/chouaib/geo_ai/logs/"
 mkdir -p "$LOG_DIR"
 
-# === First Script: cpo_atlas_ndp.py ===
-echo "Starting cpo_atlas_ndp.py on GPUs 1,2,3,4..."
-CUDA_VISIBLE_DEVICES=1,2,3,4 accelerate launch --main_process_port=29515 --num_processes=3 NLLB/nllb_xalma_ndp.py \
-    > "$LOG_DIR/nllb_xalma_ndp_out.log" 2> "$LOG_DIR/nllb_xalma_ndp_err.log"
-
 # === Second Script: cpo_atlas_rbf.py ===
 echo "Starting cpo_atlas_rbf.py on GPUs 1,2,3,4..."
 CUDA_VISIBLE_DEVICES=1,2,3,4 accelerate launch --main_process_port=29516 --num_processes=3 NLLB/nllb_xalma_rbf.py \
