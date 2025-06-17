@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import math
 import inspect
 import random
 import warnings
@@ -630,7 +630,7 @@ class CPOTrainer(Trainer):
 
             # Compute scaled dot-product attention scores
             # Shape: [batch_size, seq_len, seq_len]
-            attention_scores = torch.matmul(Q, K.transpose(1, 2)) / (dim ** 0.5)
+            attention_scores = torch.matmul(Q, K.transpose(1, 2)) / ( math.sqrt(dim))
 
             # Softmax over keys dimension (rejected words)
             attention_weights = F.softmax(attention_scores, dim=-1)
@@ -654,7 +654,7 @@ class CPOTrainer(Trainer):
         #penalty = torch.clamp(self.relax_cofficient_1 * torch.exp(self.relax_cofficient_2 * penalty)-1, max=1.0)
         # penalty = 0.2
         # print('penalty:', penalty)
-        logits = (policy_chosen_logps - (1- penalty_atten).clamp(0.0, 1.0).mean(dim=1) * policy_rejected_logps).to(self.accelerator.device)
+        logits = (policy_chosen_logps - (1- penalty_atten).clamp(0.0, 1.0) * policy_rejected_logps).to(self.accelerator.device)
 
         # The beta is a temperature parameter for the CPO loss, typically something in the range of 0.1 to 0.5.
         # We ignore the reference model as beta -> 0. The label_smoothing parameter encodes our uncertainty about the labels and
