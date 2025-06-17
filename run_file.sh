@@ -1,5 +1,4 @@
 #!/bin/bash
-conda activate geo_ai
 export CUDA_VISIBLE_DEVICES=1,2,3,4
 
 # === Setup ===
