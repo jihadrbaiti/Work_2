@@ -627,47 +627,48 @@ class CPOTrainer(Trainer):
         policy_chosen_logps = policy_chosen_logps.to(device1)
         policy_rejected_logps = policy_rejected_logps.to(device1)
         num_non_pad_tokens = num_non_pad_tokens.to(device1)
-        
-        def word_level_rbf_similarity(logits1, logits2, sigma=None, use_median=False):
+        def semantic_alignment_score(chosen_logits, rejected_logits, reduction="mean"):
             """
-            Computes RBF similarity for each word position across the batch.
-
+            Computes semantic alignment scores between chosen and rejected responses.
+            
             Args:
-                logits1: Tensor of shape [batch_size, sequence_length, vocab_size]
-                logits2: Tensor of shape [batch_size, sequence_length, vocab_size]
-                sigma: float or None. If None, sigma is estimated from pairwise distances.
-                use_median: Use median instead of mean when estimating sigma (more robust to outliers)
+                chosen_logits: [batch_size, seq_len, dim]
+                rejected_logits: [batch_size, seq_len, dim]
+                reduction: 'mean' or 'max' — how to aggregate alignment scores
 
             Returns:
-                Tensor of shape [batch_size, sequence_length] with RBF similarity scores.
+                alignment_scores: [batch_size] tensor of scalar scores
             """
-            batch_size, sequence_length, vocab_size = logits1.shape
-            rbf_similarities = torch.zeros((batch_size, sequence_length), device=logits1.device)
+            batch_size, seq_len, dim = chosen_logits.shape
 
-            for i in range(sequence_length):
-                # Extract logits for current word position across the batch
-                word_logits1 = logits1[:, i, :]  # shape: [batch_size, vocab_size]
-                word_logits2 = logits2[:, i, :]  # shape: [batch_size, vocab_size]
+            # L2 normalize to get cosine-like dot product
+            Q = F.normalize(chosen_logits, p=2, dim=-1)  # queries
+            K = F.normalize(rejected_logits, p=2, dim=-1)  # keys
 
-                # Compute squared Euclidean distance between each pair in the batch
-                diff = word_logits1 - word_logits2                         # [batch_size, vocab_size]
-                dist_squared = (diff ** 2).sum(dim=1)                      # [batch_size]
+            # Compute scaled dot-product attention scores
+            # Shape: [batch_size, seq_len, seq_len]
+            attention_scores = torch.matmul(Q, K.transpose(1, 2)) / ( math.sqrt(dim))
 
-                # Estimate or use provided sigma
-                if sigma is None:
-                    pairwise_dists = torch.cdist(word_logits1, word_logits2, p=2)
-                    flat_dists = pairwise_dists.view(-1)
-                    sigma_val = flat_dists.median() if use_median else flat_dists.mean()
-                else:
-                    sigma_val = sigma
+            # Softmax over keys dimension (rejected words)
+            attention_weights = F.softmax(attention_scores, dim=-1)
 
-                # RBF similarity calculation
-                similarities = torch.exp(-dist_squared / (2 * sigma_val ** 2 + 1e-8))
-                rbf_similarities[:, i] = similarities
+            # Alignment score: how well chosen tokens align with rejected
+            # Higher weights → stronger semantic alignment
+            if reduction == "mean":
+                alignment_scores = attention_weights.mean(dim=[1, 2])  # scalar per batch
+            elif reduction == "max":
+                alignment_scores = attention_weights.max(dim=2).values.mean(dim=1)
+            else:
+                raise ValueError("Reduction must be 'mean' or 'max'.")
 
-            return rbf_similarities
-        penalty_rbf = word_level_rbf_similarity(policy_chosen_logits, policy_rejected_logits, use_median=True)
-        logits = (policy_chosen_logps - (1- penalty_rbf).clamp(0.0, 1.0).mean(dim=1) * policy_rejected_logps).to(self.accelerator.device)
+            return alignment_scores  # shape: [batch_size]
+        penalty_atten = semantic_alignment_score(policy_chosen_logits, policy_rejected_logits)
+        logits = (policy_chosen_logps - (1- penalty_atten).clamp(0.0, 1.0) * policy_rejected_logps).to(self.accelerator.device)
+        ## old = cos_sim
+        # The beta is a temperature parameter for the CPO loss, typically something in the range of 0.1 to 0.5.
+        # We ignore the reference model as beta -> 0. The label_smoothing parameter encodes our uncertainty about the labels and
+        # calculates a conservative CPO loss.
+
         if self.loss_type == "simpo":
             gamma_logratios = self.simpo_gamma / self.beta
             logits = logits - gamma_logratios

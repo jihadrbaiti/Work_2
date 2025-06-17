@@ -627,25 +627,7 @@ class CPOTrainer(Trainer):
         policy_chosen_logps = policy_chosen_logps.to(device1)
         policy_rejected_logps = policy_rejected_logps.to(device1)
         num_non_pad_tokens = num_non_pad_tokens.to(device1)
-        len_chosen = policy_chosen_logps.shape[0]
-        #print('num_non_pad_tokens', num_non_pad_tokens[:len_chosen])
-        #print('policy_chosen_logits shape[1]', policy_chosen_logits[1])
-        #print()
-        x_flat = policy_chosen_logits.view(policy_chosen_logits.size(0), -1)
-        y_flat = policy_rejected_logits.view(policy_rejected_logits.size(0), -1)
-
-        x_norm = F.normalize(x_flat, p=2, dim=-1)
-        y_norm = F.normalize(y_flat, p=2, dim=-1)
-        cos_sim = torch.sum(x_norm * y_norm, dim=-1) 
-        #print('cos_sim', cos_sim)
-        #print('cos_sim shape', cos_sim.shape)
-        ##penalty = torch.abs((policy_chosen_logits / num_non_pad_tokens[:len_chosen] - policy_rejected_logits / num_non_pad_tokens[len_chosen:]))
-        ##penalty1 = torch.clamp(self.relax_cofficient_1 * torch.exp(self.relax_cofficient_2 * penalty)-1, max=1.0)
-        #sigma = self.relax_cofficient_1
-        #penalty2 = torch.exp(- (penalty ** 2) / (2 * sigma ** 2))
-        #penalty3 = (policy_chosen_logps * policy_chosen_logps) / (torch.norm(policy_chosen_logps, p=2) * torch.norm(policy_chosen_logps, p=2))
-        # penalty = 0.2
-        #print('policy_rejected_logps shape',policy_rejected_logps.shape)
+        
         def word_level_cosine_similarity(logits1, logits2):
             """
                 logits1: PyTorch tensor of shape [batch_size, sequence_length, vocab_size].
@@ -675,12 +657,9 @@ class CPOTrainer(Trainer):
             scaled_similarities = (cosine_similarities + 1) / 2
             return scaled_similarities
         penalty_cos = scale_cosine_similarity_torch(word_level_cosine_similarity(policy_chosen_logits, policy_rejected_logits))
-        #print('penalty_cos',(1- penalty_cos).clamp(0.0, 1.0).mean(dim=1))
+     
         logits = (policy_chosen_logps - (1- penalty_cos).clamp(0.0, 1.0).mean(dim=1) * policy_rejected_logps).to(self.accelerator.device)
-        ## old = cos_sim
-        # The beta is a temperature parameter for the CPO loss, typically something in the range of 0.1 to 0.5.
-        # We ignore the reference model as beta -> 0. The label_smoothing parameter encodes our uncertainty about the labels and
-        # calculates a conservative CPO loss.
+       
 
         if self.loss_type == "simpo":
             gamma_logratios = self.simpo_gamma / self.beta
