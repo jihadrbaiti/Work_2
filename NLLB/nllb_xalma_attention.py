@@ -49,6 +49,7 @@ cpo_config = CPOConfig(
     run_name='NLLB_XALMA_attention',
     cpo_alpha=0.8,
     eval_steps = 200,
+    save_total_limit=1,
     generate_during_eval =True, 
     is_encoder_decoder = True, 
     max_completion_length=256,
