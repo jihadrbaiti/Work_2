@@ -11,12 +11,12 @@ test_data = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/f
 print('test of NLLB/xalma_ndp')
 # Load model and tokenizer
 model = AutoModelForSeq2SeqLM.from_pretrained(
-    '/localssd/chouaib/geo_ai/Model_NLLB/XALMA_ndp/checkpoint-10000',
+    '/localssd/chouaib/geo_ai/Model_NLLB/XALMA_ndp/XALMA_ndp/checkpoint-10000/',
     torch_dtype=torch.float16, 
     device_map="auto"
 )
 tokenizer = AutoTokenizer.from_pretrained(
-    "/localssd/chouaib/geo_ai/Model_NLLB/XALMA_ndp/checkpoint-10000",
+    "/localssd/chouaib/geo_ai/Model_NLLB/XALMA_ndp/XALMA_ndp/checkpoint-10000/",
     padding_side='left'
 )
 
