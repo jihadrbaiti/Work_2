@@ -4,7 +4,8 @@ export CUDA_VISIBLE_DEVICES=1,2,3,4
 # === Setup ===
 LOG_DIR="/localssd/chouaib/geo_ai/logs/"
 mkdir -p "$LOG_DIR"
-
+source /localssd/chouaib/anaconda3/envs/geo_ai
+conda activate geo_ai
 
 echo "Starting test of xalma_atlas_rbf.py on one gpu"
 
