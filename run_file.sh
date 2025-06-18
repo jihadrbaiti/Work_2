@@ -9,35 +9,35 @@ conda activate geo_ai
 
 echo "Starting test of xalma_atlas_rbf.py on one gpu"
 
-python test_xalma_rbf.py > "$LOG_DIR/test_xalma_rbf_out.log" 2> "$LOG_DIR/test_xalma_rbf_err.log"
+/localssd/chouaib/anaconda3/envs/geo_ai/bin/python test_xalma_rbf.py > "$LOG_DIR/test_xalma_rbf_out.log" 2> "$LOG_DIR/test_xalma_rbf_err.log"
 
 
 echo "Starting test of xalma_atlas_ndp.py on one gpu"
 
  
-python test_xalma_ndf.py > "$LOG_DIR/test_xalma_ndf_out.log" 2> "$LOG_DIR/test_xalma_ndf_err.log"
+/localssd/chouaib/anaconda3/envs/geo_ai/bin/python test_xalma_ndf.py > "$LOG_DIR/test_xalma_ndf_out.log" 2> "$LOG_DIR/test_xalma_ndf_err.log"
 
 echo "Starting test of xalma_atlas_attention.py on one gpu"
 
  
-python test_xalma_attention.py > "$LOG_DIR/test_xalma_attention_out.log" 2> "$LOG_DIR/test_xalma_attention_err.log"
+/localssd/chouaib/anaconda3/envs/geo_ai/bin/python test_xalma_attention.py > "$LOG_DIR/test_xalma_attention_out.log" 2> "$LOG_DIR/test_xalma_attention_err.log"
 
 
 echo "Starting test of xalma_nllb_rbf.py on one gpu"
 
  
-python NLLB/test_xalma_rbf.py > "$LOG_DIR/test_xalma_NLLB_rbf_out.log" 2> "$LOG_DIR/test_xalma_NLLB_rbf_err.log"
+/localssd/chouaib/anaconda3/envs/geo_ai/bin/python NLLB/test_xalma_rbf.py > "$LOG_DIR/test_xalma_NLLB_rbf_out.log" 2> "$LOG_DIR/test_xalma_NLLB_rbf_err.log"
 
 
 echo "Starting test of xalma_nllb_ndp.py on one gpu"
 
  
-python NLLB/test_xalma_ndp.py > "$LOG_DIR/test_xalma_NLLB_ndp_out.log" 2> "$LOG_DIR/test_xalma_NLLB_ndp_err.log"
+/localssd/chouaib/anaconda3/envs/geo_ai/bin/python NLLB/test_xalma_ndp.py > "$LOG_DIR/test_xalma_NLLB_ndp_out.log" 2> "$LOG_DIR/test_xalma_NLLB_ndp_err.log"
 
 echo "Starting test of xalma_nllb_attention.py on one gpu"
 
  
-python NLLB/test_xalma_attention.py > "$LOG_DIR/test_xalma_NLLB_attention_out.log" 2> "$LOG_DIR/test_xalma_NLLB_attention_err.log"
+/localssd/chouaib/anaconda3/envs/geo_ai/bin/python NLLB/test_xalma_attention.py > "$LOG_DIR/test_xalma_NLLB_attention_out.log" 2> "$LOG_DIR/test_xalma_NLLB_attention_err.log"
 
 
 echo "✅ Both scripts completed."
