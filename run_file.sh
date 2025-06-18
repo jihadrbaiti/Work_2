@@ -8,6 +8,7 @@ mkdir -p "$LOG_DIR"
 
 echo "Starting test of xalma_atlas_rbf.py on one gpu"
 
+conda init
 conda activate geo_ai
 python test_xalma_rbf.py > "$LOG_DIR/test_xalma_rbf_out.log" 2> "$LOG_DIR/test_xalma_rbf_err.log"
 
