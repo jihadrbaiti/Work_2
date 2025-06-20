@@ -1,6 +1,8 @@
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
+from transformers.trainer_utils import SIMPLE_SFT_CHAT_TEMPLATE
+
 import pandas as pd
 
 torch.cuda.set_device(0) 
@@ -21,6 +23,13 @@ tokenizer = AutoTokenizer.from_pretrained(
     padding_side='left'
 )
 
+
+tokenizer.chat_template = SIMPLE_SFT_CHAT_TEMPLATE
+
+# Set pad_token if missing
+if tokenizer.pad_token is None:
+    tokenizer.pad_token = tokenizer.eos_token
+
 source_language = "Moroccan dialect"
 target_language = "English"
 
@@ -36,6 +45,7 @@ for i in range(len(test_data)):
     messages = [{"role": "user", "content": prompt}]
     
     
+    #prompt1 = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     prompt1 = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     inputs = tokenizer([prompt1], return_tensors="pt", padding=True, max_length=40, truncation=True).to(device)
     # Set pad_token to eos_token if it's not set
