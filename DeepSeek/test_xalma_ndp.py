@@ -36,8 +36,8 @@ for i in range(len(test_data)):
     messages = [{"role": "user", "content": prompt}]
     
     
-    prompt1 = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-    inputs = tokenizer([prompt1], return_tensors="pt", padding=True, max_length=40, truncation=True).to(device)
+    #prompt1 = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+    inputs = tokenizer([messages], return_tensors="pt", padding=True, max_length=40, truncation=True).to(device)
     # Set pad_token to eos_token if it's not set
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
