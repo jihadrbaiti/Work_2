@@ -1,7 +1,7 @@
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
-from transformers.trainer_utils import SIMPLE_SFT_CHAT_TEMPLATE
+#from transformers.trainer_utils import SIMPLE_SFT_CHAT_TEMPLATE
 
 import pandas as pd
 
