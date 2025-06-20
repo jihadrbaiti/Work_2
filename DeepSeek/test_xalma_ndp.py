@@ -7,17 +7,17 @@ torch.cuda.set_device(0)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 smoothing_function = SmoothingFunction().method1
 
-print('Test script for prediction of CPO _atlas training model')
-test_data = pd.read_csv('/home/jihad.rbaiti/Work_2/CPO/data/parallel_dataset/final_data_splitting/test.csv')
+print('Test script for prediction of XALMA_ndp_atlas training model')
+test_data = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/final_data_splitting/test.csv')
 
 # Load model and tokenizer
 model = AutoModelForCausalLM.from_pretrained(
-    '/home/jihad.rbaiti/lustre/aim_neural-7he0p8agska/users/jihad.rbaiti/Work2_vf/Atlas_chat_2/XALMA_cos/checkpoint-10000',
+    '/localssd/chouaib/geo_ai/Model2/DeepSeek/XALMA_cos/checkpoint-500',
     torch_dtype=torch.float16
 ).to(device)
 #model.eval()
 tokenizer = AutoTokenizer.from_pretrained(
-    "/home/jihad.rbaiti/lustre/aim_neural-7he0p8agska/users/jihad.rbaiti/Work2_vf/Atlas_chat_2/XALMA_cos/checkpoint-10000",
+    "/localssd/chouaib/geo_ai/Model2/DeepSeek/XALMA_cos/checkpoint-500",
     padding_side='left'
 )
 
@@ -83,7 +83,7 @@ for i in range(len(test_data)):
 
 # Save results to CSV
 results = pd.DataFrame({'Input': src, 'Output': ref, 'Prediction': generated_response1})
-results.to_csv('/home/jihad.rbaiti/Work_2/CPO/CPO_atlas/Predictions/xalma_cos_2.csv', index=False)
+results.to_csv('/localssd/chouaib/geo_ai/Work_2/Predictions/Atlas-chat/xalma_ndp_2.csv', index=False)
 
 # Calculate and print average BLEU score
 average_bleu = sum(bleu_scores) / len(bleu_scores)
