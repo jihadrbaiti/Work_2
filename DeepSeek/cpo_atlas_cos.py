@@ -36,17 +36,17 @@ model = get_peft_model(base_model, peft_config)
 
 #wandb.init(id='wf803ujj', resume='must', project="huggingface", name="ATLAS_cos" )
 
-if tokenizer.pad_token is None:
+'''if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
-#if tokenizer.chat_template is None:
-#    tokenizer.chat_template = SIMPLE_SFT_CHAT_TEMPLATE
+if tokenizer.chat_template is None:
+    tokenizer.chat_template = SIMPLE_SFT_CHAT_TEMPLATE'''
 
 wandb.login(key='86570a60523435fb4d496c0e63e8ae11c308bae2')
 print('The training script of XALMA cos using DeepSeek')
 model.to(dtype=torch.bfloat16)
 cpo_config = CPOConfig(
     output_dir='/localssd/chouaib/geo_ai/Model2/DeepSeek/XALMA_cos/',
-    max_steps=500,
+    max_steps=2500,
     eval_strategy="epoch",
     max_target_length=256,
     learning_rate=1e-5,
