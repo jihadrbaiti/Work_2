@@ -33,7 +33,13 @@ peft_config = LoraConfig(
 base_model = AutoModelForCausalLM.from_pretrained("NousResearch/Llama-2-7b-chat-hf", torch_dtype=torch.bfloat16,  trust_remote_code=True)
 tokenizer = AutoTokenizer.from_pretrained("NousResearch/Llama-2-7b-chat-hf", trust_remote_code=True)
 model = get_peft_model(base_model, peft_config)
+
 #wandb.init(id='wf803ujj', resume='must', project="huggingface", name="ATLAS_cos" )
+
+if tokenizer.pad_token is None:
+    tokenizer.pad_token = tokenizer.eos_token
+if tokenizer.chat_template is None:
+    tokenizer.chat_template = SIMPLE_SFT_CHAT_TEMPLATE
 
 wandb.login(key='86570a60523435fb4d496c0e63e8ae11c308bae2')
 print('The training script of XALMA cos using DeepSeek')
