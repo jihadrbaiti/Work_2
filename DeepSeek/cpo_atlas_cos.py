@@ -24,8 +24,8 @@ peft_config = LoraConfig(
     task_type="CAUSAL_LM",  # since you're using a decoder-only model
 )
 
-base_model = AutoModelForCausalLM.from_pretrained("deepseek-ai/DeepSeek-R1-0528", torch_dtype=torch.bfloat16)
-tokenizer = AutoTokenizer.from_pretrained("deepseek-ai/DeepSeek-R1-0528")
+base_model = AutoModelForCausalLM.from_pretrained("deepseek-ai/DeepSeek-R1-0528", torch_dtype=torch.bfloat16, trust_remote_code=False)
+tokenizer = AutoTokenizer.from_pretrained("deepseek-ai/DeepSeek-R1-0528", trust_remote_code=False)
 model = get_peft_model(base_model, peft_config)
 #wandb.init(id='wf803ujj', resume='must', project="huggingface", name="ATLAS_cos" )
 
@@ -49,7 +49,7 @@ cpo_config = CPOConfig(
     bf16=True,
     logging_first_step=True,
     beta=0.3,
-    run_name='ATLAS_cos_2',
+    run_name='DeepSeek_cos_2',
     cpo_alpha=0.8,
     eval_steps = 200,
     generate_during_eval =True, 
