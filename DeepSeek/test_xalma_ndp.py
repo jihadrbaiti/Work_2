@@ -24,8 +24,15 @@ tokenizer = AutoTokenizer.from_pretrained(
 )
 
 
-tokenizer.chat_template = SIMPLE_SFT_CHAT_TEMPLATE
-
+tokenizer.chat_template = (
+    "{% for message in messages %}"
+    "{% if message['role'] == 'user' %}"
+    "{{ bos_token + 'User: ' + message['content'] + eos_token }}"
+    "{% elif message['role'] == 'assistant' %}"
+    "{{ bos_token + 'Assistant: ' + message['content'] + eos_token }}"
+    "{% endif %}"
+    "{% endfor %}"
+)
 # Set pad_token if missing
 if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
