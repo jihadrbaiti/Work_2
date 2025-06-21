@@ -14,12 +14,12 @@ test_data = pd.read_csv('/localssd/chouaib/geo_ai/Work_2/data/parallel_dataset/f
 
 # Load model and tokenizer
 model = AutoModelForCausalLM.from_pretrained(
-    '/localssd/chouaib/geo_ai/Model2/DeepSeek/XALMA_cos/checkpoint-500',
+    '/localssd/chouaib/geo_ai/Model2/DeepSeek/XALMA_cos/checkpoint-2500',
     torch_dtype=torch.float16
 ).to(device)
 #model.eval()
 tokenizer = AutoTokenizer.from_pretrained(
-    "/localssd/chouaib/geo_ai/Model2/DeepSeek/XALMA_cos/checkpoint-500",
+    "/localssd/chouaib/geo_ai/Model2/DeepSeek/XALMA_cos/checkpoint-2500",
     padding_side='left'
 )
 
