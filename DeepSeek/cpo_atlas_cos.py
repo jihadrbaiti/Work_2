@@ -46,7 +46,7 @@ print('The training script of XALMA cos using DeepSeek')
 model.to(dtype=torch.bfloat16)
 cpo_config = CPOConfig(
     output_dir='/localssd/chouaib/geo_ai/Model2/DeepSeek/XALMA_cos/',
-    max_steps=2500,
+    max_steps=10000,
     eval_strategy="epoch",
     max_target_length=256,
     learning_rate=1e-5,
