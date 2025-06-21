@@ -1,6 +1,8 @@
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
+from trl.trainer.utils import SIMPLE_CHAT_TEMPLATE,SIMPLE_SFT_CHAT_TEMPLATE
+
 #from transformers.trainer_utils import SIMPLE_SFT_CHAT_TEMPLATE
 
 import pandas as pd
@@ -33,6 +35,9 @@ tokenizer = AutoTokenizer.from_pretrained(
     "{% endif %}"
     "{% endfor %}"
 )'''
+
+if tokenizer.chat_template is None:
+    tokenizer.chat_template = SIMPLE_SFT_CHAT_TEMPLATE
 # Set pad_token if missing
 if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
