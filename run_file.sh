@@ -9,11 +9,6 @@ conda activate geo_ai
 
 echo "Starting test of xalma_atlas_ndp.py on one gpu"
  
-/localssd/chouaib/anaconda3/envs/geo_ai/bin/python test_xalma_ndp.py > "$LOG_DIR/test_xalma_ndp_out.log" 2> "$LOG_DIR/test_xalma_ndp_err.log"
+CUDA_VISIBLE_DEVICES=1,2,3,4 accelerate launch --main_process_port=29525 --num_processes=3 DeepSeek/cpo_atlas_cos.py  > "$LOG_DIR/training_xalma_cos_deepseek_out.log" 2> "$LOG_DIR/training_xalma_cos_deepseek_err.log"
 
 
-echo "Starting test of xalma_nllb_ndp.py on one gpu"
-
-/localssd/chouaib/anaconda3/envs/geo_ai/bin/python NLLB/test_xalma_ndp.py > "$LOG_DIR/test_xalma_NLLB_ndp_out.log" 2> "$LOG_DIR/test_xalma_NLLB_ndp_err.log"
-
-echo "✅ Both scripts completed."
